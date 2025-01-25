@@ -18,7 +18,7 @@ class SbbApplicationTests {
         {
             String subject = String.format("테스트 데이터:제목[%03d]", i);
             String content = String.format("[%03d]", i);
-            questionService.create(subject, content);
+            questionService.create(subject, content, null);
         }
 
     }

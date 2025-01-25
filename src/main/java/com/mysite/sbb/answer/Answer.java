@@ -1,17 +1,16 @@
 package com.mysite.sbb.answer;
 
+import java.time.LocalDateTime;
 import com.mysite.sbb.question.Question;
+import com.mysite.sbb.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @Entity
+@Getter @Setter
 public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "TEXT")
@@ -19,6 +18,11 @@ public class Answer {
 
     private LocalDateTime createDate;
 
+    private LocalDateTime modifyDate;
+
     @ManyToOne
     private Question question;
+
+    @ManyToOne
+    private SiteUser author;
 }

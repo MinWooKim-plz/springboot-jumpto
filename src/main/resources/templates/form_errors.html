@@ -2,3 +2,13 @@
     <div th:each="err:${#fields.allErrors()}" th:text="${err}"></div>
 </div>
 
+<!--
+    #fiedls = Thymeleaf템플릿에서 제공하는 유틸리티 객체
+            폼 필드 검증 및 오류 처리 기능 제공
+        #fields.hasAnyErrors()
+        #fields.allErrors() -> 폼의 모든 필드에서 발생한 검증 오류를 리스트로 반환
+        #fields.hasErrors('fieldName') : 특정 필드에 오류가 있는지 확인
+        #fields.errors('fieldName') -> 특정 필드에 대한 오류 메시지를 리스트 반환
+        #fields.value('fieldName') -> 특정 필드의 현재 값 반환
+        #fields.rawValue('fieldName') -> 특정 필드의 바인딩되지 않은 원래 값 반환
+-->
