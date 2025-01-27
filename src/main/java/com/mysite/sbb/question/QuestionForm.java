@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuestionForm {
-    @NotBlank(message="제목 적어도 빈 칸 입력")
+    @NotBlank(message="제목 적어도 하나 입력")
     @Size(max=200)
     private String subject;
 

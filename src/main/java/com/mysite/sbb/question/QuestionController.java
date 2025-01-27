@@ -2,6 +2,7 @@ package com.mysite.sbb.question;
 
 import java.security.Principal;
 import com.mysite.sbb.answer.AnswerForm;
+import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,13 @@ public class QuestionController {
 
     //    @ResponseBody
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page) {
+    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page,
+                       @RequestParam(value="kw", defaultValue="") String kw) {
         //List<Question> questions = questionService.getList();
         //model.addAttribute("questions", questions);
-        Page<Question> paging = questionService.getList(page);
+        Page<Question> paging = questionService.getList(page, kw);
         model.addAttribute("paging", paging);
+        model.addAttribute("kw", kw);
         return "question_list";
     }
     @GetMapping("/detail/{id}")
@@ -89,5 +92,14 @@ public class QuestionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
         questionService.delete(question);
         return "redirect:/";
+    }
+
+    @GetMapping("vote/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String questionVote(@PathVariable("id") Integer id, Principal principal) {
+        Question question = questionService.getQuestion(id);
+        SiteUser siteUser = userService.getUser(principal.getName());
+        questionService.vote(question, siteUser);
+        return String.format("redirect:/question/detail/%s", id);
     }
 }

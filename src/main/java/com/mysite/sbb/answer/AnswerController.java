@@ -4,6 +4,7 @@ package com.mysite.sbb.answer;
 import java.security.Principal;
 import com.mysite.sbb.question.Question;
 import com.mysite.sbb.question.QuestionService;
+import com.mysite.sbb.user.SiteUser;
 import com.mysite.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,8 @@ public class AnswerController {
             model.addAttribute("question", question);
             return "question_detail";
         }
-        answerService.create(question, answerForm.getContent(), userService.getUser(principal.getName()));
-        return String.format("redirect:/question/detail/%s", id);
+        Answer answer = answerService.create(question, answerForm.getContent(), userService.getUser(principal.getName()));
+        return String.format("redirect:/question/detail/%s#answer_%s", id, answer.getId());
     }
 
     @GetMapping("/modify/{id}")
@@ -59,7 +60,7 @@ public class AnswerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         answerService.modify(answer, answerForm.getContent());
-        return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 
     @GetMapping("/delete/{id}")
@@ -69,6 +70,16 @@ public class AnswerController {
         if (!answer.getAuthor().getUsername().equals(principal.getName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제 권한이 없습니다.");
         answerService.delete(answer);
-        return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
+    }
+
+
+    @GetMapping("/vote/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String voteAnswer(@PathVariable("id")Integer id, Principal principal) {
+        Answer answer = answerService.getAnswer(id);
+        SiteUser siteUser = userService.getUser(principal.getName());
+        answerService.vote(answer, siteUser);
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 }
